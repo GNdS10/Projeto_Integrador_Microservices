@@ -1,0 +1,44 @@
+### 1. Login do administrador (esperado: 200 com token)
+POST http://localhost:8080/auth/signin
+Content-Type: application/json
+
+{"email":"admin@admin.dev","password":"teste"}
+
+> {% client.global.set("adminToken", response.body.token); %}
+
+### 2. Cadastrar produto SEM token (esperado: 401)
+POST http://localhost:8080/ws/products
+Content-Type: application/json
+
+{"description":"POCO X8 Pro Global","brand":"POCO","model":"POCO X8 Pro","currency":"USD","price":395.5}
+
+### 3. Cadastrar produto COM token do admin (esperado: 201)
+POST http://localhost:8080/ws/products
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{"description":"POCO X8 Pro Global","brand":"POCO","model":"POCO X8 Pro","currency":"USD","price":395.5}
+
+### 4. Cadastrar usuario comum (esperado: 201)
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{"name":"Usuario Comum","email":"user@atitus.edu.br","password":"Teste123"}
+
+### 5. Login do usuario comum (esperado: 200 com token)
+POST http://localhost:8080/auth/signin
+Content-Type: application/json
+
+{"email":"user@atitus.edu.br","password":"Teste123"}
+
+> {% client.global.set("userToken", response.body.token); %}
+
+### 6. Cadastrar produto com token de usuario comum (esperado: 403)
+POST http://localhost:8080/ws/products
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{"description":"Teste Comum","brand":"Teste","model":"Teste","currency":"USD","price":100}
+
+### 7. Rota publica sem token (esperado: 200)
+GET http://localhost:8080/products/1?targetCurrency=EUR
