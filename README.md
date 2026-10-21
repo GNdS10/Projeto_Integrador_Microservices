@@ -1,32 +1,36 @@
-# Atividades Avaliativas - Microsserviços Java
+# Projeto Integrador - Microsserviços Java
 
 Alunos: Gabriel Nogueira dos Santos - RA: 1127692
-        Ronaldo Castelani - RA:
+Ronaldo Castelani - RA:
 
-Projeto com quatro serviços, usando Consul, PostgreSQL e Flyway:
+Neste projeto temos quatro serviços que conversam entre si. Usamos Consul, PostgreSQL e Flyway.
 
-- `gateway-api` (porta 8080): entrada única. Valida o login (JWT) nas rotas protegidas.
-- `auth-api` (porta 8200): cadastro e login de usuários.
-- `product-api` (porta 8000): produtos.
-- `currency-api` (porta 8100): cotações de moedas.
+- gateway-api (porta 8080): é a porta de entrada. Todas as requisições passam por ele.
+- auth-api (porta 8200): faz o cadastro e o login dos usuários.
+- product-api (porta 8000): cuida dos produtos.
+- currency-api (porta 8100): informa a cotação das moedas.
 
-## Como executar
+## Como rodar
 
-1. Ter o PostgreSQL rodando com os bancos `db_product`, `db_currency` e `db_user`.
-2. Rodar o `microservices/start_consul.bat`.
-3. Subir `auth-api`, `currency-api`, `product-api` e por último o `gateway-api`.
+1. Deixe o PostgreSQL ligado e crie os bancos db_product, db_currency e db_user.
+2. Coloque o consul.exe na pasta microservices e abra o start_consul.bat.
+3. Rode os serviços nesta ordem: auth-api, currency-api, product-api e, por último, gateway-api.
 
-## Testes (sempre pelo gateway, porta 8080)
+## Como testar
 
-- Login: `POST http://localhost:8080/auth/signin` com `admin@admin.dev` / `teste` (devolve o token JWT).
-- Cadastro de usuário comum: `POST http://localhost:8080/auth/signup`.
-- Produto: `GET http://localhost:8080/products/1?targetCurrency=EUR`.
-- Cadastrar produto (rota protegida): `POST http://localhost:8080/ws/products` com o token em Authorization (Bearer).
-  - Sem token: 401. Usuário comum: 403. Administrador: 201.
+Use o arquivo testes.http no IntelliJ. As requisições sempre vão pelo gateway (porta 8080).
 
-## Atividades realizadas
+- Login: POST /auth/signin com admin@admin.dev e senha teste. Devolve um token.
+- Cadastrar usuário comum: POST /auth/signup.
+- Ver produto: GET /products/1?targetCurrency=EUR (não precisa de login).
+- Cadastrar produto: POST /ws/products, enviando o token no cabeçalho Authorization (Bearer).
+  - Sem token: erro 401.
+  - Usuário comum: erro 403.
+  - Administrador: 201, produto criado.
+
+## O que foi feito
 
 1. Criei o currency-api, que informa a cotação entre moedas. Ele segue o mesmo modelo do product-api.
-2. Fiz o product-api buscar a cotação no currency-api. Adicionei proteções para quando o currency-api falha ou demora: valor padrão, limite de tempo, novas tentativas, circuit breaker (pausa as chamadas depois de várias falhas) e cache.
-3. Fiz o currency-api buscar a cotação no site do Banco Central, usando as mesmas proteções. Se o Banco Central falhar ou não tiver a cotação, ele usa o banco de dados local. Se não achar em nenhum dos dois, devolve erro 404.
-4. Criei o gateway-api e o login com JWT. O gateway confere o token nas rotas que começam com `/ws/` e envia os dados do usuário aos serviços. O product-api só deixa o administrador cadastrar produtos.
+2. Fiz o product-api buscar a cotação no currency-api. Coloquei proteções para quando o currency-api falha ou demora: valor padrão, limite de tempo, novas tentativas, circuit breaker (para de chamar o serviço depois de várias falhas) e cache.
+3. Fiz o currency-api buscar a cotação no site do Banco Central, com as mesmas proteções. Se o Banco Central falhar ou não tiver a cotação, ele usa o banco de dados local. Se não achar em nenhum dos dois, devolve erro 404.
+4. Criei o gateway-api e o login com token (JWT). O gateway confere o token nas rotas que começam com /ws/. O product-api só deixa o administrador cadastrar produtos.
