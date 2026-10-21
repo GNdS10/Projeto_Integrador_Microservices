@@ -1,6 +1,7 @@
 # Atividades Avaliativas - Microsserviços Java
 
-Aluno: Gabriel Nogueira dos Santos - RA: 1127692
+Alunos: Gabriel Nogueira dos Santos - RA: 1127692
+        Ronaldo Castelani - RA:
 
 Projeto com quatro serviços, usando Consul, PostgreSQL e Flyway:
 
