@@ -1,7 +1,9 @@
 # Projeto Integrador - Microsserviços Java
 
-Alunos: Gabriel Nogueira dos Santos - RA: 1127692
+Alunos: 
+Gabriel Nogueira dos Santos - RA: 1127692
 Ronaldo Castelani - RA:1130584
+Patrick Marques - RA:1126427
 
 Neste projeto temos quatro serviços que conversam entre si. Usamos Consul, PostgreSQL e Flyway.
 
